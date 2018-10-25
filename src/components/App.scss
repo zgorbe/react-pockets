@@ -1,0 +1,11 @@
+@import 'bootstrap/scss/bootstrap';
+
+@import './Login/Login.scss';
+
+.app {
+    .loading {
+        background: url('../assets/loading_spinner.gif') center no-repeat;
+        height: 30vw;
+        width: 100vw;
+    }
+}
