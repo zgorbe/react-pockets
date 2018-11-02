@@ -1,0 +1,16 @@
+.home {
+    .badge {
+        position: relative;
+        top: -2px;
+    }
+    .jumbotron {
+        margin: 1rem 0;
+        text-align: center;
+    }
+    .table {
+        text-align: center;
+        th {
+            border-top: 0;
+        }
+    }
+}
