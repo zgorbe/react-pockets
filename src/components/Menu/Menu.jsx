@@ -36,8 +36,8 @@ class Menu extends Component {
                                 Actions
                             </DropdownToggle>
                             <DropdownMenu right>
-                                <DropdownItem>Create Action</DropdownItem>
-                                <DropdownItem>Create Movement</DropdownItem>
+                                <DropdownItem href="#/create-action">Create Action</DropdownItem>
+                                <DropdownItem href="#/create-movement">Create Movement</DropdownItem>
                                 <DropdownItem divider />
                                 <DropdownItem href="#/actions">All Actions</DropdownItem>
                             </DropdownMenu>
