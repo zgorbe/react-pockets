@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "pockets": {
+      ".read": "auth.uid === 'simplelogin:1'",
+      ".write": "auth.uid === 'simplelogin:1'"
+    },
+    "snapshots": {
+      ".read": "auth.uid === 'simplelogin:1'",
+      ".write": "auth.uid === 'simplelogin:1'"
+    },
+    "playground": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}

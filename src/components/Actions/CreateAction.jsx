@@ -5,15 +5,26 @@ import PocketService from '../../services/PocketService';
 
 class CreateAction extends Component {
     state = { 
-        pocket: 'A',
-        amount: '0',
-        direction: 'plus'
+        pocketId: '',
+        amount: 0,
+        direction: 'plus',
+        loading: true,
+        pockets: []
     }
 
     constructor(props) {
         super(props);
 
         this.amountInput = React.createRef();
+        PocketService.getPockets().then(pockets => {
+            if (pockets.length) {
+                this.setState({
+                    pocketId: pockets[0].id,
+                    pockets: pockets,
+                    loading: false
+                });
+            }
+        });
     }
 
     handleChange = (e) => {
@@ -34,7 +45,7 @@ class CreateAction extends Component {
     
     handleCreateAction = () => {
         if (this._validate()) {
-            PocketService.addAction(this.state.pocket, this.state.amount, this.state.direction);
+            PocketService.addAction(this.state.pocketId, parseInt(this.state.amount, 10), this.state.direction);
             this.props.history.push('/');
         }
     }
@@ -43,15 +54,18 @@ class CreateAction extends Component {
         return ( 
             <Container className="action-form">
                 <h2 className="text-center">Create Action</h2>
+                { this.state.loading && <div className="col-md-12 loading"></div> }
+                { !this.state.loading && 
                 <Form className="form mx-auto col-md-6">
                     <Col>
                         <FormGroup>
-                            <Label for="pocket">Pocket:</Label>
-                            <Input type="select" name="pocket" id="pocket" onChange={ this.handleChange }>
-                                <option>A</option>
-                                <option>O</option>
-                                <option>H</option>
-                                <option>L</option>
+                            <Label for="pocketId">Pocket:</Label>
+                            <Input type="select" name="pocketId" id="pocketId" onChange={ this.handleChange }>
+                                {
+                                    this.state.pockets.map((pocket) => {
+                                        return <option value={ pocket.id } key={ pocket.id }>{ pocket.name }</option>
+                                    })
+                                }
                             </Input>
                         </FormGroup>
                         <FormGroup>
@@ -72,6 +86,7 @@ class CreateAction extends Component {
                         </FormGroup>
                     </Col>
                 </Form>
+                }
             </Container>
         );
     }

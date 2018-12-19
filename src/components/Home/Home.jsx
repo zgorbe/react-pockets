@@ -27,6 +27,11 @@ class Home extends Component {
             });
         });
     }
+    
+    componentWillUnmount() {
+        pockectsRef.off();
+    }
+
     render() { 
         return (
             <div className="col-12">

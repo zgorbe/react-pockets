@@ -5,15 +5,27 @@ import PocketService from '../../services/PocketService';
 
 class CreateMovement extends Component {
     state = { 
-        sourcePocket: 'A',
-        destinationPocket: 'O',
-        amount: '0'
+        sourcePocketId: '',
+        destinationPocketId: '',
+        amount: '0',
+        loading: true,
+        pockets: []
     }
 
     constructor(props) {
         super(props);
 
         this.amountInput = React.createRef();
+        PocketService.getPockets().then((pockets) => {
+            if (pockets.length > 1) {
+                this.setState({
+                    sourcePocketId: pockets[0].id,
+                    destinationPocketId: pockets[1].id,
+                    pockets: pockets,
+                    loading: false
+                });
+            }
+        });
     }
 
     handleChange = (e) => {
@@ -34,7 +46,7 @@ class CreateMovement extends Component {
     
     handleCreateMovement = () => {
         if (this._validate()) {
-            PocketService.addMovement(this.state.sourcePocket, this.state.destinationPocket, this.state.amount);
+            PocketService.addMovement(this.state.sourcePocketId, this.state.destinationPocketId, this.state.amount);
             this.props.history.push('/');
         }
     }
@@ -43,24 +55,28 @@ class CreateMovement extends Component {
         return ( 
             <Container className="action-form">
                 <h2 className="text-center">Create Movement</h2>
+                { this.state.loading && <div className="col-md-12 loading"></div> }
+                { !this.state.loading && 
                 <Form className="form mx-auto col-md-6">
                     <Col>
                         <FormGroup>
-                            <Label for="sourcePocket">Source Pocket:</Label>
-                            <Input type="select" name="sourcePocket" id="sourcePocket" onChange={ this.handleChange }>
-                                <option>A</option>
-                                <option>O</option>
-                                <option>H</option>
-                                <option>L</option>
+                            <Label for="sourcePocketId">Source Pocket:</Label>
+                            <Input type="select" name="sourcePocketId" id="sourcePocketId" onChange={ this.handleChange }>
+                                {
+                                    this.state.pockets.map((pocket) => {
+                                        return <option value={ pocket.id } key={ pocket.id }>{ pocket.name }</option>
+                                    })
+                                }
                             </Input>
                         </FormGroup>
                         <FormGroup>
-                            <Label for="destinationPocket">Source Pocket:</Label>
-                            <Input type="select" name="destinationPocket" id="destinationPocket" onChange={ this.handleChange } defaultValue="O">
-                                <option>A</option>
-                                <option>O</option>
-                                <option>H</option>
-                                <option>L</option>
+                            <Label for="destinationPocketId">Source Pocket:</Label>
+                            <Input type="select" name="destinationPocketId" id="destinationPocketId" onChange={ this.handleChange } defaultValue="O">
+                                {
+                                    this.state.pockets.map((pocket) => {
+                                        return <option value={ pocket.id } key={ pocket.id }>{ pocket.name }</option>
+                                    })
+                                }
                             </Input>
                         </FormGroup>
                         <FormGroup>
@@ -74,6 +90,7 @@ class CreateMovement extends Component {
                         </FormGroup>
                     </Col>
                 </Form>
+                }
             </Container>
         );
     }

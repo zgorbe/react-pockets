@@ -12,11 +12,11 @@ const config = {
 };
 
 const app = firebase.initializeApp(config);
-const db = app.database();
 
-export default firebase;
+export const db = app.database();
 export const pockectsRef = db.ref('pockets');
 
+export default firebase;
 //https://github.com/coderjourney/chords/pull/7/commits/f9895120061fbdc3c2b1b3182bc910ac4050e411
 
 //https://css-tricks.com/firebase-react-part-2-user-authentication/
