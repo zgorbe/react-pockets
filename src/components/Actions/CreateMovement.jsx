@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Col, Form, FormGroup, Label, Input, Button, FormFeedback } from 'reactstrap';
+import { Container, Col, Form, FormGroup, Label, Input, Button, FormFeedback, UncontrolledAlert } from 'reactstrap';
 import CancelButton from './CancelButton';
 import PocketService from '../../services/PocketService';
 
@@ -7,9 +7,10 @@ class CreateMovement extends Component {
     state = { 
         sourcePocketId: '',
         destinationPocketId: '',
-        amount: '0',
+        amount: 0,
         loading: true,
-        pockets: []
+        pockets: [],
+        error: ''
     }
 
     constructor(props) {
@@ -49,8 +50,17 @@ class CreateMovement extends Component {
             PocketService.addMovement(
                 this.state.sourcePocketId, 
                 this.state.destinationPocketId, 
-                parseInt(this.state.amount, 10));
-            this.props.history.push('/');
+                parseInt(this.state.amount, 10)).then(
+                    () => {
+                        this.props.history.push('/');
+                    },
+                    error => {
+                        this.setState({
+                            error: error,
+                            amountError: '' 
+                        });
+                    }
+            );
         }
     }
 
@@ -62,6 +72,7 @@ class CreateMovement extends Component {
                 { !this.state.loading && 
                 <Form className="form mx-auto col-md-6">
                     <Col>
+                        { !!this.state.error.length && <UncontrolledAlert color="danger">{ this.state.error }</UncontrolledAlert> }
                         <FormGroup>
                             <Label for="sourcePocketId">Source Pocket:</Label>
                             <Input type="select" name="sourcePocketId" id="sourcePocketId" onChange={ this.handleChange }>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Col, Form, FormGroup, Label, Input, Button, FormFeedback } from 'reactstrap';
+import { Container, Col, Form, FormGroup, Label, Input, Button, FormFeedback, UncontrolledAlert } from 'reactstrap';
 import CancelButton from './CancelButton';
 import PocketService from '../../services/PocketService';
 
@@ -9,7 +9,8 @@ class CreateAction extends Component {
         amount: 0,
         direction: 'plus',
         loading: true,
-        pockets: []
+        pockets: [],
+        error: ''
     }
 
     constructor(props) {
@@ -45,8 +46,17 @@ class CreateAction extends Component {
     
     handleCreateAction = () => {
         if (this._validate()) {
-            PocketService.addAction(this.state.pocketId, parseInt(this.state.amount, 10), this.state.direction);
-            this.props.history.push('/');
+            PocketService.addAction(this.state.pocketId, parseInt(this.state.amount, 10), this.state.direction).then(
+                () => {
+                    this.props.history.push('/');
+                },
+                error => {
+                    this.setState({
+                        error: error,
+                        amountError: '' 
+                    });
+                }
+            );
         }
     }
 
@@ -58,6 +68,7 @@ class CreateAction extends Component {
                 { !this.state.loading && 
                 <Form className="form mx-auto col-md-6">
                     <Col>
+                        { !!this.state.error.length && <UncontrolledAlert color="danger">{ this.state.error }</UncontrolledAlert> }
                         <FormGroup>
                             <Label for="pocketId">Pocket:</Label>
                             <Input type="select" name="pocketId" id="pocketId" onChange={ this.handleChange }>

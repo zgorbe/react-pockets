@@ -5,7 +5,7 @@ class PocketService {
         var pocketRef = db.ref('pockets/' + pocketId),
             actionsRef = db.ref('pockets/' + pocketId + '/actions');
 
-        pocketRef.once('value', snapshot => {
+        return pocketRef.once('value').then(snapshot => {
             let pocketData = snapshot.val(),
                 newBalance = 0;
 
@@ -23,27 +23,32 @@ class PocketService {
                     timestamp: new Date().getTime()
                 };
 
-                if (isMovement) {
-                    action.movement = true;
-                }
-
-                pocketRef.update({
+                let pocketUpdate = pocketRef.update({
                     balance: newBalance,
                     timestamp: new Date().getTime()
                 });
 
-                actionsRef.push(action);
+                if (isMovement) {
+                    action.movement = true;
+                }
+
+                let actionUpdate = actionsRef.push(action);
+
+                return Promise.all(pocketUpdate, actionUpdate);
+            } else {
+                return Promise.reject('Invalid balance for pocket: "' + pocketData.name + '"');
             }
         });
     }
 
     addMovement(sourcePocketId, destinationPocketId, amount) {
-        this.addAction(sourcePocketId, amount, 'minus', true);
-        this.addAction(destinationPocketId, amount, 'plus', true);
+        return this.addAction(sourcePocketId, amount, 'minus', true).then(() => {
+            return this.addAction(destinationPocketId, amount, 'plus', true);
+        });
     }
 
     getPockets() {
-        return pockectsRef.once('value').then((snapshot) => {
+        return pockectsRef.once('value').then(snapshot => {
             let data = snapshot.val(),
                 pockets = [];
 
