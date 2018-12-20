@@ -20,7 +20,7 @@ class CreateMovement extends Component {
             if (pockets.length > 1) {
                 this.setState({
                     sourcePocketId: pockets[0].id,
-                    destinationPocketId: pockets[1].id,
+                    destinationPocketId: pockets[0].id,
                     pockets: pockets,
                     loading: false
                 });
@@ -46,7 +46,10 @@ class CreateMovement extends Component {
     
     handleCreateMovement = () => {
         if (this._validate()) {
-            PocketService.addMovement(this.state.sourcePocketId, this.state.destinationPocketId, this.state.amount);
+            PocketService.addMovement(
+                this.state.sourcePocketId, 
+                this.state.destinationPocketId, 
+                parseInt(this.state.amount, 10));
             this.props.history.push('/');
         }
     }
@@ -63,17 +66,17 @@ class CreateMovement extends Component {
                             <Label for="sourcePocketId">Source Pocket:</Label>
                             <Input type="select" name="sourcePocketId" id="sourcePocketId" onChange={ this.handleChange }>
                                 {
-                                    this.state.pockets.map((pocket) => {
+                                    this.state.pockets.map(pocket => {
                                         return <option value={ pocket.id } key={ pocket.id }>{ pocket.name }</option>
                                     })
                                 }
                             </Input>
                         </FormGroup>
                         <FormGroup>
-                            <Label for="destinationPocketId">Source Pocket:</Label>
-                            <Input type="select" name="destinationPocketId" id="destinationPocketId" onChange={ this.handleChange } defaultValue="O">
+                            <Label for="destinationPocketId">Destination Pocket:</Label>
+                            <Input type="select" name="destinationPocketId" id="destinationPocketId" onChange={ this.handleChange }>
                                 {
-                                    this.state.pockets.map((pocket) => {
+                                    this.state.pockets.map(pocket => {
                                         return <option value={ pocket.id } key={ pocket.id }>{ pocket.name }</option>
                                     })
                                 }

@@ -1,7 +1,7 @@
 import { pockectsRef, db } from '../firebase';
 
 class PocketService {
-    addAction(pocketId, amount, direction) {
+    addAction(pocketId, amount, direction, isMovement) {
         var pocketRef = db.ref('pockets/' + pocketId),
             actionsRef = db.ref('pockets/' + pocketId + '/actions');
 
@@ -15,23 +15,31 @@ class PocketService {
                 newBalance = pocketData.balance - amount;
             }
 
-            if (newBalance > 0) {
+            if (newBalance >= 0) {
+                let action = {
+                    amount: amount,
+                    direction: direction,
+                    pocket: pocketId,
+                    timestamp: new Date().getTime()
+                };
+
+                if (isMovement) {
+                    action.movement = true;
+                }
+
                 pocketRef.update({
                     balance: newBalance,
                     timestamp: new Date().getTime()
                 });
 
-                actionsRef.push({
-                    amount: amount,
-                    direction: direction,
-                    pocket: pocketId,
-                    timestamp: new Date().getTime()
-                });
+                actionsRef.push(action);
             }
         });
     }
+
     addMovement(sourcePocketId, destinationPocketId, amount) {
-        console.log(sourcePocketId, destinationPocketId);
+        this.addAction(sourcePocketId, amount, 'minus', true);
+        this.addAction(destinationPocketId, amount, 'plus', true);
     }
 
     getPockets() {
