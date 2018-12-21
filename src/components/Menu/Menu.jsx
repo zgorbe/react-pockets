@@ -40,6 +40,7 @@ class Menu extends Component {
                                 <DropdownItem href="#/create-movement">Create Movement</DropdownItem>
                                 <DropdownItem divider />
                                 <DropdownItem href="#/actions">All Actions</DropdownItem>
+                                <DropdownItem href="#/stats">Monthly Statistics</DropdownItem>
                             </DropdownMenu>
                         </UncontrolledDropdown>                        
                         <NavItem>

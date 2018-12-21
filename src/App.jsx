@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import './styles/App.css';
 import Menu from './components/Menu/Menu';
 import Home from './components/Home/Home';
+import Statistics from './components/Statistics/Statistics';
 import ActionList from './components/Actions/ActionList';
 import CreateAction from './components/Actions/CreateAction';
 import CreateMovement from './components/Actions/CreateMovement';
@@ -49,6 +50,7 @@ class App extends Component {
                         <div className="row">
                             <Switch>
                                 <Route exact path="/" component={ Home }></Route>
+                                <Route exact path="/stats" component={ Statistics }></Route>
                                 <Route exact path="/actions" component={ ActionList }></Route>
                                 <Route exact path="/create-action" component={ CreateAction }></Route>
                                 <Route exact path="/create-movement" component={ CreateMovement }></Route>

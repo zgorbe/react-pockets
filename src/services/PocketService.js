@@ -59,6 +59,29 @@ class PocketService {
             return pockets;
         });
     }
+
+    getAllActions(skipMovements) {
+        return this.getPockets().then(pockets => {
+            let actions = [];
+            for (let pocket of pockets) {
+                for (let key in pocket.actions) {
+                    let action = pocket.actions[key];
+                    
+                    if (skipMovements && action.movement) {
+                        continue;
+                    }
+
+                    action.pocketName = pocket.name; 
+                    actions.push(action);
+                }
+            }
+            actions.sort(function(a, b) {
+                return b.timestamp - a.timestamp;
+            });
+
+            return actions;
+        });
+    }
 }
 
 const pocketService = new PocketService();

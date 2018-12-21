@@ -3,12 +3,15 @@
 @import './Login/Login.scss';
 @import './Home/Home.scss';
 @import './Actions/CancelButton.scss';
-@import './Actions/Actions.scss';
+@import './Statistics/Statistics.scss';
 
 .app {
     .loading {
         background: url('../assets/loading_spinner.gif') center no-repeat;
         height: 30vh;
         width: 100vw;
+    }
+    h2 {
+        margin: 1.5rem 0;
     }
 }
