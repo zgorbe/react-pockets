@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import PocketService from '../../services/PocketService';
 import BarChart from 'react-bar-chart';
+import { Alert } from 'reactstrap';
 
 const margin = { top: 20, right: 20, bottom: 30, left: 60 };
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 class Statistics extends Component {
     state = { 
         loading: true,
         data: [],
         width: 0,
-        year: 2018
+        saving: 0
     }
 
     constructor(props) {
@@ -18,7 +20,7 @@ class Statistics extends Component {
         this.statistics = React.createRef();
 
         PocketService.getAllActions(true).then(actions => {
-            let data = this.getStatistics(actions, this.state.year);
+            let data = this.getStatistics(actions);
             
             this.setState({
                 loading: false,
@@ -29,48 +31,55 @@ class Statistics extends Component {
         });
     }
 
-    componentDidMount() {
-        window.onresize = () => {
-            this.setState({ width: this.statistics.current.offsetWidth });
-        };
+    handleWindowResize = () => {
+        this.setState({ width: this.statistics.current.offsetWidth });
     }
 
-    getStatistics = (actions, year) => {
+    componentDidMount() {
+        window.addEventListener('resize', this.handleWindowResize);
+    }
+    
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleWindowResize);
+    }
+
+    getStatistics = (actions) => {
         let dataObj = {},
-            result = [];
+            result = {};
 
         for (let action of actions) {
             let date = new Date(action.timestamp),
-                key = date.getFullYear() + '-' + (date.getMonth() + 1),
-                data = dataObj[key];
+                year = date.getFullYear(),
+                month = months[date.getMonth()];
 
-            if (date.getFullYear() !== year) {
-                continue;
-            }
-
-            if (!data) {
-                dataObj[key] = [];
-            }
-
-            dataObj[key].push(action);
-        }
-
-        for (let key in dataObj) {
-            dataObj[key] = dataObj[key].reduce((acc, action) => acc + action.amount * (action.direction === 'plus' ? 1 : -1), 0);
-        }
-
-        for (let key in dataObj) {
-            result.push({
-                text: key,
-                value: dataObj[key] < 0 ? 0 : dataObj[key]
-            });
+            dataObj[year] = dataObj[year] || {}; 
+            dataObj[year][month] = dataObj[year][month] || [];
+            dataObj[year][month].push(action);
         }
         
+        for (let year in dataObj) {
+            for (let month in dataObj[year]) {
+                dataObj[year][month] = dataObj[year][month].reduce((acc, action) => acc + action.amount * (action.direction === 'plus' ? 1 : -1), 0);
+            }
+
+            result[year] = result[year] || [];
+            
+            for (let month in dataObj[year]) {
+                result[year].push({
+                    text: month,
+                    value: dataObj[year][month] < 0 ? 0 : dataObj[year][month]
+                });
+            }
+        }
+
         return result;
     }
 
-    handleBarClick = (element) => {
-        console.log(element);
+    handleBarClick = element => {
+        this.setState({ saving: element.value });
+        setTimeout(() => {
+            this.setState({ saving: 0 });
+        }, 2000);
     }
 
     render() { 
@@ -80,14 +89,21 @@ class Statistics extends Component {
                 { !this.state.loading &&
                     <div className="statistics" ref={ this.statistics }>
                         <h2 className="text-center">Monthly Statistics</h2>
-                        <BarChart ylabel='Savings'
-                            width={ this.state.width }
-                            height={ 500 }
-                            margin={ margin }
-                            data={ this.state.data }
-                            onBarClick={ this.handleBarClick } />
+                        { Object.keys(this.state.data).sort().reverse().map((year, index) => {
+                            return <div key={ index }>
+                                <h3>{ year }</h3>
+                                <BarChart ylabel='Savings'
+                                    width={ this.state.width }
+                                    height={ 500 }
+                                    margin={ margin }
+                                    data={ this.state.data[year] }
+                                    onBarClick={ this.handleBarClick } />
+                            </div>
+                            })
+                        }
                     </div>
                 }
+                { this.state.saving > 0  && <Alert className="saving" color="success">Saving in selected month is { this.state.saving }!</Alert> }
             </div>            
         );
     }
