@@ -4,6 +4,7 @@ import './styles/App.css';
 import Menu from './components/Menu/Menu';
 import Home from './components/Home/Home';
 import Statistics from './components/Statistics/Statistics';
+import YearlyStatistics from './components/Statistics/YearlyStatistics';
 import ActionList from './components/Actions/ActionList';
 import CreateAction from './components/Actions/CreateAction';
 import CreateMovement from './components/Actions/CreateMovement';
@@ -50,6 +51,7 @@ class App extends Component {
                         <div className="row">
                             <Switch>
                                 <Route exact path="/" component={ Home }></Route>
+                                <Route exact path="/yearly-stats" component={ YearlyStatistics }></Route>
                                 <Route exact path="/stats" component={ Statistics }></Route>
                                 <Route exact path="/actions" component={ ActionList }></Route>
                                 <Route exact path="/create-action" component={ CreateAction }></Route>

@@ -41,6 +41,7 @@ class Menu extends Component {
                                 <DropdownItem divider />
                                 <DropdownItem href="#/actions">All Actions</DropdownItem>
                                 <DropdownItem href="#/stats">Monthly Statistics</DropdownItem>
+                                <DropdownItem href="#/yearly-stats">Yearly Statistics</DropdownItem>
                             </DropdownMenu>
                         </UncontrolledDropdown>                        
                         <NavItem>
