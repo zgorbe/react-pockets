@@ -76,10 +76,12 @@ class Statistics extends Component {
     }
 
     handleBarClick = element => {
-        this.setState({ saving: element.value });
-        setTimeout(() => {
-            this.setState({ saving: 0 });
-        }, 2000);
+        if (this.state.saving === 0) {
+            this.setState({ saving: element.value });
+            setTimeout(() => {
+                this.setState({ saving: 0 });
+            }, 2000);
+        }
     }
 
     render() { 
@@ -103,7 +105,7 @@ class Statistics extends Component {
                         }
                     </div>
                 }
-                { this.state.saving > 0  && <Alert className="saving" color="success">Saving in selected month is { this.state.saving }!</Alert> }
+                { this.state.saving > 0  && <Alert className="saving" color="success"><b>{ this.state.saving }</b> saving in the selected month!</Alert> }
             </div>            
         );
     }

@@ -2,6 +2,7 @@
     fill: steelblue;
 
     &:hover {
+        cursor: pointer;
         fill: brown;
     }
 }
@@ -23,8 +24,9 @@
 
 .saving {
     left: calc(50% - 150px);
+    opacity: .8;
     position: fixed;
     text-align: center;
-    top: 20%;
+    top: calc(50% - 50px);
     width: 320px;
 }
