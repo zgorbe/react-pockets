@@ -1,5 +1,7 @@
 import { pockectsRef, db } from '../firebase';
 
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 class PocketService {
     addAction(pocketId, amount, direction, isMovement) {
         var pocketRef = db.ref('pockets/' + pocketId),
@@ -81,6 +83,47 @@ class PocketService {
 
             return actions;
         });
+    }
+    
+    getStatisticsData() {
+        return this.getAllActions(true).then(actions => {
+            let dataObj = {}
+            for (let action of actions) {
+                let date = new Date(action.timestamp),
+                    year = date.getFullYear(),
+                    month = months[date.getMonth()];
+
+                dataObj[year] = dataObj[year] || {}; 
+                dataObj[year][month] = dataObj[year][month] || [];
+                dataObj[year][month].push(action);
+            }
+
+            return dataObj;
+        });
+    }
+
+    filterIncomingOutgingData(dataObj, isIncoming) {
+        let result = {};
+
+        for (let year in dataObj) {
+            for (let month in dataObj[year]) {
+                result[year] = result[year] || {}; 
+                result[year][month] = result[year][month] || [];
+
+                result[year][month] = dataObj[year][month].filter(action => {
+                    return (isIncoming && action.direction === 'plus') || 
+                            (!isIncoming && action.direction === 'minus');
+                });
+
+                if (!isIncoming) {
+                    for (let action of result[year][month]) {
+                        action.direction = 'plus';
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 }
 

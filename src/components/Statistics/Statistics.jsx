@@ -4,7 +4,6 @@ import BarChart from 'react-bar-chart';
 import { Alert } from 'reactstrap';
 
 const margin = { top: 20, right: 20, bottom: 30, left: 60 };
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 class Statistics extends Component {
     state = { 
@@ -19,8 +18,8 @@ class Statistics extends Component {
 
         this.statistics = React.createRef();
 
-        PocketService.getAllActions(true).then(actions => {
-            let data = this.getStatistics(actions);
+        PocketService.getStatisticsData().then(dataObj => {
+            let data = this.getStatistics(dataObj);
             
             this.setState({
                 loading: false,
@@ -43,19 +42,8 @@ class Statistics extends Component {
         window.removeEventListener('resize', this.handleWindowResize);
     }
 
-    getStatistics = (actions) => {
-        let dataObj = {},
-            result = {};
-
-        for (let action of actions) {
-            let date = new Date(action.timestamp),
-                year = date.getFullYear(),
-                month = months[date.getMonth()];
-
-            dataObj[year] = dataObj[year] || {}; 
-            dataObj[year][month] = dataObj[year][month] || [];
-            dataObj[year][month].push(action);
-        }
+    getStatistics = dataObj => {
+        let result = {};
         
         for (let year in dataObj) {
             for (let month in dataObj[year]) {
