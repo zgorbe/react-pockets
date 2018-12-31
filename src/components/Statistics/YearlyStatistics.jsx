@@ -97,7 +97,7 @@ class YearlyStatistics extends Component {
                                 margin={ margin }
                                 data={ this.state.incomingData }
                                 onBarClick={ this.handleBarClick } />
-                             <BarChart ylabel='Outging'
+                             <BarChart ylabel='Outgoing'
                                 width={ this.state.width }
                                 height={ 500 }
                                 margin={ margin }

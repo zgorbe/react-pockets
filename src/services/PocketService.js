@@ -36,7 +36,7 @@ class PocketService {
 
                 let actionUpdate = actionsRef.push(action);
 
-                return Promise.all(pocketUpdate, actionUpdate);
+                return Promise.all([pocketUpdate, actionUpdate]);
             } else {
                 return Promise.reject('Invalid balance for pocket: "' + pocketData.name + '"');
             }
