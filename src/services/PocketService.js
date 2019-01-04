@@ -72,7 +72,7 @@ class PocketService {
                     if (skipMovements && action.movement) {
                         continue;
                     }
-
+                    action.key = key;
                     action.pocketName = pocket.name; 
                     actions.push(action);
                 }

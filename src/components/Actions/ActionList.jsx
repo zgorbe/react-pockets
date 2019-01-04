@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import PocketService from '../../services/PocketService';
 import { Table } from 'reactstrap';
+import EditableAction from './EditableAction';
 
 class ActionList extends Component {
     state = { 
         actions: [],
-        loading: true
+        loading: true,
+        editedAction: {}
     }
 
     constructor(props) {
@@ -19,6 +21,27 @@ class ActionList extends Component {
         });
     }
 
+    handleActionEdit = (action) => {
+        this.setState({
+            editedAction: action
+        });
+    }
+
+    componentDidMount() {
+        document.addEventListener('keydown', this.handleKeyDown);
+    }
+    componentWillUnmount( ){
+        document.removeEventListener('keydown', this.handleKeyDown);
+    }
+
+    handleKeyDown = (e) => {
+        if (e.keyCode === 27) {
+            this.setState({
+                editedAction: {}
+            });
+        }
+    }
+
     render() { 
         return (
             <div className="col-12">
@@ -26,7 +49,7 @@ class ActionList extends Component {
                 { !this.state.loading &&
                     <div className="action-list">
                         <h2 className="text-center">Action List</h2>
-                        <Table className="mx-auto col-md-8">
+                        <Table className="mx-auto col-md-8" striped>
                             <thead>
                                 <tr>
                                     <th>Pocket</th>
@@ -38,14 +61,12 @@ class ActionList extends Component {
                             </thead>
                             <tbody>
                             {
-                                this.state.actions.map( (action, index) => {
-                                    return <tr key={ index }>
-                                        <td>{ action.pocketName }</td>
-                                        <td>{ action.amount }</td>
-                                        <td>{ action.direction }</td>
-                                        <td>{ typeof action.movement !== 'undefined' ? String(action.movement) : 'false' }</td>
-                                        <td>{ new Date(action.timestamp).toLocaleDateString() }</td>
-                                    </tr>
+                                this.state.actions.map( action => {
+                                    return <EditableAction 
+                                                action={ action } 
+                                                key={ action.key } 
+                                                edited={ this.state.editedAction.key === action.key }
+                                                handleActionEdit={ this.handleActionEdit }></EditableAction>
                                 })
                             }
                             </tbody>
