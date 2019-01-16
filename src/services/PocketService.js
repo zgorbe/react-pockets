@@ -4,7 +4,7 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 
 class PocketService {
     addAction(pocketId, amount, direction, isMovement) {
-        var pocketRef = db.ref('pockets/' + pocketId),
+        let pocketRef = db.ref('pockets/' + pocketId),
             actionsRef = db.ref('pockets/' + pocketId + '/actions');
 
         return pocketRef.once('value').then(snapshot => {
@@ -43,6 +43,23 @@ class PocketService {
         });
     }
 
+    updateAction(actionId, pocketId, newPocketName, newAmount) {
+        let pocketRef = db.ref('pockets/' + pocketId),
+            actionRef = db.ref('pockets/' + pocketId + '/actions/' + actionId);
+
+        Promise.all([pocketRef.once('value'), actionRef.once('value')]).then(snapshots => {
+            let pocketData = snapshots[0].val(),
+                actionData = snapshots[1].val();
+            console.log(pocketData, actionData);
+        });
+    }
+
+    deleteAction(actionId, pocketId) {
+        let actionsRef = db.ref('pockets/' + pocketId + '/actions');
+        actionsRef.once('value').then(snapshot => {
+            console.log(snapshot.val()); // remove child?
+        });
+    }
     addMovement(sourcePocketId, destinationPocketId, amount) {
         return this.addAction(sourcePocketId, amount, 'minus', true).then(() => {
             return this.addAction(destinationPocketId, amount, 'plus', true);

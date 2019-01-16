@@ -27,21 +27,6 @@ class ActionList extends Component {
         });
     }
 
-    componentDidMount() {
-        document.addEventListener('keydown', this.handleKeyDown);
-    }
-    componentWillUnmount( ){
-        document.removeEventListener('keydown', this.handleKeyDown);
-    }
-
-    handleKeyDown = (e) => {
-        if (e.keyCode === 27) {
-            this.setState({
-                editedAction: {}
-            });
-        }
-    }
-
     render() { 
         return (
             <div className="col-12">

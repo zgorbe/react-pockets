@@ -1,21 +1,10 @@
 .action-list {
     .editable-action {
-        &:hover {
+        .pocket-name:hover, .pocket-amount:hover {
+            outline: 1px solid lightgray;
             cursor: pointer;
         }
 
-        .buttons {
-            background-color: #373C42;
-            bottom: 0;
-            left: 0;
-            position: fixed;
-            opacity: .8;
-            text-align: center;
-            width: 100%;
-            .btn {
-                margin: 0 .5em;
-            }
-        }
         input[name="pocketName"] {
             width: 50px;
         }
