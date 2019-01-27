@@ -48,8 +48,8 @@ class PocketService {
             actionRef = db.ref('pockets/' + pocketId + '/actions/' + actionId);
 
         Promise.all([pocketRef.once('value'), actionRef.once('value')]).then(snapshots => {
-            let pocketData = snapshots[0].val(),
-                actionData = snapshots[1].val();
+            let [pocketData, actionData] = snapshots.map(snap => snap.val());
+
             console.log(pocketData, actionData);
         });
     }

@@ -28,10 +28,11 @@ class ActionList extends Component {
     }
 
     render() { 
+        const { loading, actions } = this.state;
         return (
             <div className="col-12">
-                { this.state.loading && <div className="loading mx-auto col-md-8"></div> }
-                { !this.state.loading &&
+                { loading && <div className="loading mx-auto col-md-8"></div> }
+                { !loading &&
                     <div className="action-list">
                         <h2 className="text-center">Action List</h2>
                         <Table className="mx-auto col-md-8" striped>
@@ -46,7 +47,7 @@ class ActionList extends Component {
                             </thead>
                             <tbody>
                             {
-                                this.state.actions.map( action => {
+                                actions.map( action => {
                                     return <EditableAction 
                                                 action={ action } 
                                                 key={ action.key } 

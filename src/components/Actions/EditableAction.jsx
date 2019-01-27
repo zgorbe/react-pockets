@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import PocketService from '../../services/PocketService';
 
 class EditableAction extends Component {
@@ -63,5 +64,11 @@ class EditableAction extends Component {
         );
     }
 }
- 
+
+EditableAction.propTypes = {
+    action: PropTypes.object.isRequired,
+    edited: PropTypes.bool.isRequired,
+    handleActionEdit: PropTypes.func.isRequired
+}
+
 export default EditableAction;
