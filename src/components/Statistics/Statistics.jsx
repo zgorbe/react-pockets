@@ -1,47 +1,31 @@
 import React, { Component } from 'react';
 import PocketService from '../../services/PocketService';
-import BarChart from 'react-bar-chart';
-import { Alert } from 'reactstrap';
+import { Bar } from 'react-chartjs-2';
 
-const margin = { top: 20, right: 20, bottom: 30, left: 60 };
+const BACKGROUND_COLOR = 'rgba(40, 80, 160, 0.1)';
+const BORDER_COLOR = 'rgba(20, 40, 80, 0.1)';
 
 class Statistics extends Component {
     state = { 
         loading: true,
-        data: [],
-        width: 0,
-        saving: 0
+        data: { datasets: [], labels: [] },
     }
 
     constructor(props) {
         super(props);
 
         this.statistics = React.createRef();
+    }
 
-        PocketService.getStatisticsData().then(dataObj => {
-            let data = this.getStatistics(dataObj);
-            
-            this.setState({
-                loading: false,
-                data: data                
-            });
-        }).then(() => {
-            this.setState({ width: this.statistics.current.offsetWidth });
+    async componentDidMount() {
+        const dataObj = await PocketService.getStatisticsData();
+
+        this.setState({
+            loading: false,
+            data: this.getStatistics(dataObj)
         });
     }
-
-    handleWindowResize = () => {
-        this.setState({ width: this.statistics.current.offsetWidth });
-    }
-
-    componentDidMount() {
-        window.addEventListener('resize', this.handleWindowResize);
-    }
     
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.handleWindowResize);
-    }
-
     getStatistics = dataObj => {
         let result = {};
         
@@ -49,27 +33,19 @@ class Statistics extends Component {
             for (let month in dataObj[year]) {
                 dataObj[year][month] = dataObj[year][month].reduce((acc, action) => acc + action.amount * (action.direction === 'plus' ? 1 : -1), 0);
             }
-
-            result[year] = result[year] || [];
             
-            for (let month in dataObj[year]) {
-                result[year].push({
-                    text: month,
-                    value: dataObj[year][month] < 0 ? 0 : dataObj[year][month]
-                });
-            }
+            result[year] = {
+                datasets: [{
+                    label: year,
+                    data: Object.values(dataObj[year]),
+                    backgroundColor: BACKGROUND_COLOR,
+                    borderColor: BORDER_COLOR,
+                    borderWidth: 1
+                }],
+                labels: Object.keys(dataObj[year])
+            };
         }
-
         return result;
-    }
-
-    handleBarClick = element => {
-        if (this.state.saving === 0) {
-            this.setState({ saving: element.value });
-            setTimeout(() => {
-                this.setState({ saving: 0 });
-            }, 2000);
-        }
     }
 
     render() { 
@@ -79,21 +55,14 @@ class Statistics extends Component {
                 { !this.state.loading &&
                     <div className="statistics" ref={ this.statistics }>
                         <h2 className="text-center">Monthly Statistics</h2>
-                        { Object.keys(this.state.data).sort().reverse().map((year, index) => {
-                            return <div key={ index }>
-                                <h3>{ year }</h3>
-                                <BarChart ylabel='Savings'
-                                    width={ this.state.width }
-                                    height={ 500 }
-                                    margin={ margin }
-                                    data={ this.state.data[year] }
-                                    onBarClick={ this.handleBarClick } />
+                        { Object.keys(this.state.data).sort().reverse().map(year => 
+                            <div className="mt-5" key={ year }>
+                                <Bar data={ this.state.data[year] } />
                             </div>
-                            })
+                            )
                         }
                     </div>
                 }
-                { this.state.saving > 0  && <Alert className="saving" color="success"><b>{ this.state.saving }</b> saving in the selected month!</Alert> }
             </div>            
         );
     }
