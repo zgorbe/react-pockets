@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import PocketService from '../../services/PocketService';
 import { Bar } from 'react-chartjs-2';
 
-const BACKGROUND_COLOR = 'rgba(40, 80, 160, 0.1)';
-const BORDER_COLOR = 'rgba(20, 40, 80, 0.1)';
+import { BACKGROUND_COLOR, BORDER_COLOR, OPTIONS } from './constants';
 
 class Statistics extends Component {
     state = { 
@@ -40,9 +39,9 @@ class Statistics extends Component {
                     data: Object.values(dataObj[year]),
                     backgroundColor: BACKGROUND_COLOR,
                     borderColor: BORDER_COLOR,
-                    borderWidth: 1
+                    borderWidth: 1,
                 }],
-                labels: Object.keys(dataObj[year])
+                labels: Object.keys(dataObj[year]),
             };
         }
         return result;
@@ -57,7 +56,10 @@ class Statistics extends Component {
                         <h2 className="text-center">Monthly Statistics</h2>
                         { Object.keys(this.state.data).sort().reverse().map(year => 
                             <div className="mt-5" key={ year }>
-                                <Bar data={ this.state.data[year] } />
+                                <Bar 
+                                    data={ this.state.data[year] } 
+                                    options={ OPTIONS }
+                                />
                             </div>
                             )
                         }
