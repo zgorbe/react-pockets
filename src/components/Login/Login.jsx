@@ -12,7 +12,9 @@ class Login extends Component {
         passwordInvalid: false
     }
 
-    componentWillMount = () => {
+    constructor(props) {
+        super(props);
+
         firebase.auth().signOut();
     }
 

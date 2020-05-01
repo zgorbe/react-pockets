@@ -10,12 +10,6 @@ class Statistics extends Component {
         data: { datasets: [], labels: [] },
     }
 
-    constructor(props) {
-        super(props);
-
-        this.statistics = React.createRef();
-    }
-
     async componentDidMount() {
         const dataObj = await PocketService.getStatisticsData();
 
@@ -52,7 +46,7 @@ class Statistics extends Component {
             <div className="col-12">
                 { this.state.loading && <div className="loading mx-auto col-md-8"></div> }
                 { !this.state.loading &&
-                    <div className="statistics" ref={ this.statistics }>
+                    <div className="statistics">
                         <h2 className="text-center">Monthly Statistics</h2>
                         { Object.keys(this.state.data).sort().reverse().map(year => 
                             <div className="mt-5" key={ year }>

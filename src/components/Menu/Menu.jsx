@@ -49,6 +49,7 @@ class Menu extends Component {
                             <DropdownMenu right>
                                 <DropdownItem href="#/stats">Monthly Statistics</DropdownItem>
                                 <DropdownItem href="#/yearly-stats">Yearly Statistics</DropdownItem>
+                                <DropdownItem href="#/balance-stats">Balance Statistics</DropdownItem>
                             </DropdownMenu>
                         </UncontrolledDropdown>                        
                         <NavItem>

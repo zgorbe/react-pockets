@@ -5,6 +5,7 @@ import Menu from './components/Menu/Menu';
 import Home from './components/Home/Home';
 import Statistics from './components/Statistics/Statistics';
 import YearlyStatistics from './components/Statistics/YearlyStatistics';
+import BalanceStatistics from './components/Statistics/BalanceStatistics';
 import ActionList from './components/Actions/ActionList';
 import CreateAction from './components/Actions/CreateAction';
 import CreateMovement from './components/Actions/CreateMovement';
@@ -17,7 +18,9 @@ class App extends Component {
         loading: true
     }
 
-    componentWillMount() {
+    constructor(props) {
+        super(props);
+        
         this.removeAuthListener = firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 this.setState({
@@ -51,8 +54,9 @@ class App extends Component {
                         <div className="row">
                             <Switch>
                                 <Route exact path="/" component={ Home }></Route>
-                                <Route exact path="/yearly-stats" component={ YearlyStatistics }></Route>
                                 <Route exact path="/stats" component={ Statistics }></Route>
+                                <Route exact path="/yearly-stats" component={ YearlyStatistics }></Route>
+                                <Route exact path="/balance-stats" component={ BalanceStatistics }></Route>
                                 <Route exact path="/actions" component={ ActionList }></Route>
                                 <Route exact path="/create-action" component={ CreateAction }></Route>
                                 <Route exact path="/create-movement" component={ CreateMovement }></Route>

@@ -9,7 +9,9 @@ class Home extends Component {
         loading: true
     }
     
-    componentWillMount() {
+    constructor(props) {
+        super(props);
+        
         pockectsRef.on('value', snapshot => {
             let array = [],
                 resultObject = snapshot.val(),
