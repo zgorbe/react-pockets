@@ -4,38 +4,29 @@ import { Line } from 'react-chartjs-2';
 
 import { BACKGROUND_COLOR, BORDER_COLOR, OPTIONS } from './constants';
 
-
-const getBalanceData = dataObj => {
-    for (let year in dataObj) {
-        for (let month in dataObj[year]) {
-            dataObj[year][month] = dataObj[year][month].reduce((acc, action) => acc + action.amount * (action.direction === 'plus' ? 1 : -1), 0);
-        }
-    }
-    console.log(dataObj);
+const getDataForYear = (yearData, year) => { 
     return { 
         datasets: [ 
             {
-                label: ['Balance'],
+                label: [year],
                 backgroundColor: BACKGROUND_COLOR,
                 borderColor: BORDER_COLOR,
-                data: [15, -10, 20],
+                data: yearData.data,
             }
         ],
-        labels: ['a', 'b', 'c'],
+        labels: yearData.labels,
     };
-}
+};
 
 const BalanceStatistics = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState({});
 
     useEffect(() => {
-        let dataObj;
-        
         const load = async () => {
-            dataObj = await PocketService.getStatisticsData();
-            
-            setData(getBalanceData(dataObj));
+            const dataObj = await PocketService.getBalanceData();
+
+            setData(dataObj);
             setIsLoading(false);
         }
         
@@ -48,19 +39,20 @@ const BalanceStatistics = () => {
             { !isLoading &&
                 <div className="statistics">
                     <h2 className="text-center">Balance Statistics</h2>
-                    
-                        <div className="mt-5">
-                            <Line 
-                                data={ data } 
-                                options={ OPTIONS }
-                            />
-                        </div>
+                        { Object.keys(data).sort().reverse().map(year => 
+                            <div key={ year }>
+                                <div className="mt-5">
+                                    <Line 
+                                        data={ getDataForYear(data[year], year) } 
+                                        options={ OPTIONS }
+                                    />
+                                </div>
+                            </div>
+                        )}                    
                 </div>
             }
         </div>            
     );
 }
-
- 
 
 export default BalanceStatistics;

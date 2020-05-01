@@ -79,7 +79,7 @@ class PocketService {
         });
     }
 
-    getAllActions(skipMovements) {
+    getAllActions(skipMovements, sortDirection = 'desc') {
         return this.getPockets().then(pockets => {
             let actions = [];
             for (let pocket of pockets) {
@@ -95,7 +95,7 @@ class PocketService {
                 }
             }
             actions.sort(function(a, b) {
-                return b.timestamp - a.timestamp;
+                return sortDirection === 'desc' ? b.timestamp - a.timestamp : a.timestamp - b.timestamp;
             });
 
             return actions;
@@ -104,7 +104,7 @@ class PocketService {
     
     getStatisticsData() {
         return this.getAllActions(true).then(actions => {
-            let dataObj = {}
+            let dataObj = {};
             for (let action of actions) {
                 let date = new Date(action.timestamp),
                     year = date.getFullYear(),
@@ -117,6 +117,38 @@ class PocketService {
 
             return dataObj;
         });
+    }
+
+    async getBalanceData() {
+        const actions = await this.getAllActions(true, 'asc');
+
+        // TODO: investigate if data or logic is not correct
+        // using a magic number for initial balance temporarily
+        let dataObj = {},
+            balance = 2394633,
+            year, 
+            month;
+        
+        for (let [index, action] of actions.entries()) {
+            let date = new Date(action.timestamp),
+                currentYear = date.getFullYear(),
+                currentMonth = months[date.getMonth()];
+            
+            year = year || currentYear;
+            month = month || currentMonth;
+
+            if (year === currentYear && month === currentMonth && index !== actions.length - 1) {
+                balance = balance + action.amount * (action.direction === 'plus' ? 1 : -1);
+            } else {
+                dataObj[year] = dataObj[year] || { labels: [], data: [] }; 
+                dataObj[year].labels.push(month);
+                dataObj[year].data.push(balance);
+                year = undefined;
+                month = undefined;
+            }
+        }
+
+        return dataObj;
     }
 
     filterIncomingOutgingData(dataObj, isIncoming) {
