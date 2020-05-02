@@ -122,33 +122,33 @@ class PocketService {
     async getBalanceData() {
         const actions = await this.getAllActions(true, 'asc');
 
-        // TODO: investigate if data or logic is not correct
-        // using a magic number for initial balance temporarily
         let dataObj = {},
-            balance = 2394633,
-            year, 
-            month;
+            balance = 1873878; // TODO: remove this magic number!
         
-        for (let [index, action] of actions.entries()) {
+        for (let action of actions) {
             let date = new Date(action.timestamp),
-                currentYear = date.getFullYear(),
-                currentMonth = months[date.getMonth()];
+                year = date.getFullYear(),
+                month = date.getMonth();
             
-            year = year || currentYear;
-            month = month || currentMonth;
+            dataObj[year] = dataObj[year] || {}; 
+            dataObj[year][month] = dataObj[year][month] || {};
 
-            if (year === currentYear && month === currentMonth && index !== actions.length - 1) {
-                balance = balance + action.amount * (action.direction === 'plus' ? 1 : -1);
-            } else {
-                dataObj[year] = dataObj[year] || { labels: [], data: [] }; 
-                dataObj[year].labels.push(month);
-                dataObj[year].data.push(balance);
-                year = undefined;
-                month = undefined;
+            balance = balance + action.amount * (action.direction === 'plus' ? 1 : -1);
+            dataObj[year][month] = balance;
+        }
+
+        const result = {};
+
+        for (let year in dataObj) {
+            const keys = Object.keys(dataObj[year]);
+            result[year] = result[year] || { data: [], labels: [] };
+            for (let month in dataObj[year]) {
+                result[year].data.push(dataObj[year][month]);
+                result[year].labels.push(months[month]);
             }
         }
 
-        return dataObj;
+        return result;
     }
 
     filterIncomingOutgingData(dataObj, isIncoming) {
