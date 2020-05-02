@@ -140,7 +140,6 @@ class PocketService {
         const result = {};
 
         for (let year in dataObj) {
-            const keys = Object.keys(dataObj[year]);
             result[year] = result[year] || { data: [], labels: [] };
             for (let month in dataObj[year]) {
                 result[year].data.push(dataObj[year][month]);
