@@ -101,6 +101,24 @@ class PocketService {
             return actions;
         });
     }
+
+    // used only for data validation
+    async getPocketBalance() {
+        const pockets = await this.getPockets();
+        
+        let dataObj = {};
+        for (let pocket of pockets) {
+            dataObj[pocket.name] = { balance: 0 };
+            let balance = 0;
+            for (let key in pocket.actions) {
+                let action = pocket.actions[key];
+                balance = balance + action.amount * (action.direction === 'plus' ? 1 : -1);
+                dataObj[pocket.name].balance = balance;
+            }
+        }
+        
+        return dataObj;
+    }
     
     getStatisticsData() {
         return this.getAllActions(true).then(actions => {
@@ -123,7 +141,7 @@ class PocketService {
         const actions = await this.getAllActions(true, 'asc');
 
         let dataObj = {},
-            balance = 1873878; // TODO: remove this magic number!
+            balance = 0;
         
         for (let action of actions) {
             let date = new Date(action.timestamp),

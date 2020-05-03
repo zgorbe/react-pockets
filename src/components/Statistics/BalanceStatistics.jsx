@@ -25,7 +25,6 @@ const BalanceStatistics = () => {
     useEffect(() => {
         const load = async () => {
             const dataObj = await PocketService.getBalanceData();
-
             setData(dataObj);
             setIsLoading(false);
         }

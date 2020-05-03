@@ -41,7 +41,7 @@ class Home extends Component {
                 { !this.state.loading &&
                     <div className="home">
                         <Jumbotron>
-                            <h3>Your total balance is { this.state.total }</h3>
+                            <h3>Your total balance is { this.state.total.toLocaleString() }</h3>
                         </Jumbotron>
                         <Table className="mx-auto col-md-8">
                             <thead>
@@ -58,7 +58,7 @@ class Home extends Component {
                                         <td>
                                             { pocket.name } <Badge color="info">{ Object.keys(pocket.actions).length }</Badge>
                                         </td>
-                                        <td>{ pocket.balance }</td>
+                                        <td>{ pocket.balance.toLocaleString() }</td>
                                         <td>{ new Date(pocket.timestamp).toLocaleDateString() }</td>
                                     </tr>
                                 })
