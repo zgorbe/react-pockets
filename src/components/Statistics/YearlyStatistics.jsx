@@ -48,10 +48,10 @@ const YearlyStatistics = () => {
                 incomingData = getStatistics(PocketService.filterIncomingOutgingData(dataObj, true), 'Incoming'),
                 outgoingData = getStatistics(PocketService.filterIncomingOutgingData(dataObj, false), 'Outgoing');
 
-            setIsLoading(false);
             setData(data);
             setIncomingData(incomingData);
             setOutgoingData(outgoingData);
+            setIsLoading(false);
         };
 
         load();
@@ -63,18 +63,13 @@ const YearlyStatistics = () => {
             { !isLoading &&
                 <div className="statistics">
                     <h2 className="text-center">Yearly Statistics</h2>
-                    <Bar
-                        data={ data }
-                        options={ OPTIONS }
-                    />
-                    <Bar
-                        data={ incomingData }
-                        options={ OPTIONS }
-                    />
-                    <Bar
-                        data={ outgoingData }
-                        options={ OPTIONS }
-                    />
+                    {
+                        [data, incomingData, outgoingData].map(d => (
+                            <div className="mt-5" key={ d.datasets[0].label }>
+                                <Bar data={ d } options={ OPTIONS } />
+                            </div>
+                        ))
+                    }
                 </div>
             }
         </div>
