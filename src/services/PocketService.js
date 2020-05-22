@@ -12,7 +12,7 @@ class PocketService {
                 newBalance = 0;
 
             if (direction === 'plus') {
-                newBalance = pocketData.balance + amount;    
+                newBalance = pocketData.balance + amount;
             } else {
                 newBalance = pocketData.balance - amount;
             }
@@ -85,12 +85,12 @@ class PocketService {
             for (let pocket of pockets) {
                 for (let key in pocket.actions) {
                     let action = pocket.actions[key];
-                    
+
                     if (skipMovements && action.movement) {
                         continue;
                     }
                     action.key = key;
-                    action.pocketName = pocket.name; 
+                    action.pocketName = pocket.name;
                     actions.push(action);
                 }
             }
@@ -105,7 +105,7 @@ class PocketService {
     // used only for data validation
     async getPocketBalance() {
         const pockets = await this.getPockets();
-        
+
         let dataObj = {};
         for (let pocket of pockets) {
             dataObj[pocket.name] = { balance: 0 };
@@ -116,10 +116,10 @@ class PocketService {
                 dataObj[pocket.name].balance = balance;
             }
         }
-        
+
         return dataObj;
     }
-    
+
     getStatisticsData() {
         return this.getAllActions(true).then(actions => {
             let dataObj = {};
@@ -128,7 +128,7 @@ class PocketService {
                     year = date.getFullYear(),
                     month = months[date.getMonth()];
 
-                dataObj[year] = dataObj[year] || {}; 
+                dataObj[year] = dataObj[year] || {};
                 dataObj[year][month] = dataObj[year][month] || [];
                 dataObj[year][month].push(action);
             }
@@ -141,18 +141,27 @@ class PocketService {
         const actions = await this.getAllActions(true, 'asc');
 
         let dataObj = {},
-            balance = 0;
-        
-        for (let action of actions) {
-            let date = new Date(action.timestamp),
+            balance = 0,
+            currentMonth;
+
+        for (let [index, action] of actions.entries()) {
+            const date = new Date(action.timestamp),
                 year = date.getFullYear(),
                 month = date.getMonth();
-            
-            dataObj[year] = dataObj[year] || {}; 
-            dataObj[year][month] = dataObj[year][month] || {};
 
-            balance = balance + action.amount * (action.direction === 'plus' ? 1 : -1);
-            dataObj[year][month] = balance;
+            if (index === actions.length - 1) {
+                dataObj[year] = dataObj[year] || {};
+                dataObj[year][month] = balance + action.amount * (action.direction === 'plus' ? 1 : -1);
+            } else {
+                if (currentMonth !== month) {
+                    dataObj[year] = dataObj[year] || {};
+                    dataObj[year][month] = balance;
+
+                    currentMonth = month;
+                }
+
+                balance = balance + action.amount * (action.direction === 'plus' ? 1 : -1);
+            }
         }
 
         const result = {};
@@ -173,11 +182,11 @@ class PocketService {
 
         for (let year in dataObj) {
             for (let month in dataObj[year]) {
-                result[year] = result[year] || {}; 
+                result[year] = result[year] || {};
                 result[year][month] = result[year][month] || [];
 
                 result[year][month] = dataObj[year][month].filter(action => {
-                    return (isIncoming && action.direction === 'plus') || 
+                    return (isIncoming && action.direction === 'plus') ||
                             (!isIncoming && action.direction === 'minus');
                 });
 
