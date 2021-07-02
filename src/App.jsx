@@ -20,7 +20,7 @@ class App extends Component {
 
     constructor(props) {
         super(props);
-        
+
         this.removeAuthListener = firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 this.setState({
@@ -44,7 +44,7 @@ class App extends Component {
             <div className="app">
                 { this.state.loading && <div className="loading"></div> }
 
-                { !this.state.loading && this.state.authenticated && 
+                { !this.state.loading && this.state.authenticated &&
                     <div className="container">
                         <div className="row">
                             <div className="col-12">
@@ -54,19 +54,19 @@ class App extends Component {
                         <div className="row">
                             <Switch>
                                 <Route exact path="/" component={ Home }></Route>
-                                <Route exact path="/stats" component={ Statistics }></Route>
-                                <Route exact path="/yearly-stats" component={ YearlyStatistics }></Route>
-                                <Route exact path="/balance-stats" component={ BalanceStatistics }></Route>
-                                <Route exact path="/actions" component={ ActionList }></Route>
-                                <Route exact path="/create-action" component={ CreateAction }></Route>
-                                <Route exact path="/create-movement" component={ CreateMovement }></Route>
-                                <Route exact path="/login" component={ Login }></Route>
+                                <Route path="/stats" component={ Statistics }></Route>
+                                <Route path="/yearly-stats" component={ YearlyStatistics }></Route>
+                                <Route path="/balance-stats" component={ BalanceStatistics }></Route>
+                                <Route path="/actions" component={ ActionList }></Route>
+                                <Route path="/create-action" component={ CreateAction }></Route>
+                                <Route path="/create-movement" component={ CreateMovement }></Route>
+                                <Route path="/login" component={ Login }></Route>
                             </Switch>
                         </div>
-                    </div> 
+                    </div>
                 }
                 { !this.state.loading && !this.state.authenticated && <Login></Login> }
-                
+
             </div>
         );
     }
