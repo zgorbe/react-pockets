@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import { pockectsRef } from '../../firebase';
 import { Jumbotron, Table, Badge } from 'reactstrap';
+import { Link } from 'react-router-dom';
 
 class Home extends Component {
-    state = { 
+    state = {
         pockets: [],
         total: 0,
         loading: true
     }
-    
+
     constructor(props) {
         super(props);
-        
+
         pockectsRef.on('value', snapshot => {
             let array = [],
                 resultObject = snapshot.val(),
@@ -19,22 +20,24 @@ class Home extends Component {
 
             array = Object.keys(resultObject).map(key => {
                 total += resultObject[key].balance;
-                return resultObject[key];
+                const pocket = resultObject[key];
+                pocket.pocketId = key;
+                return pocket;
             });
 
-            this.setState({ 
+            this.setState({
                 pockets: array,
                 total: total,
                 loading: false
             });
         });
     }
-    
+
     componentWillUnmount() {
         pockectsRef.off();
     }
 
-    render() { 
+    render() {
         return (
             <div className="col-12">
                 { this.state.loading && <div className="loading mx-auto col-md-8"></div> }
@@ -53,10 +56,16 @@ class Home extends Component {
                             </thead>
                             <tbody>
                             {
-                                this.state.pockets.map( (pocket, index) => {
-                                    return <tr key={ index }>
+                                this.state.pockets.map( pocket => {
+                                    return <tr key={ pocket.pocketId }>
                                         <td>
-                                            { pocket.name } <Badge color="info">{ Object.keys(pocket.actions).length }</Badge>
+                                            <Link
+                                                to={`/actions/${pocket.pocketId}`}
+                                                className="mr-1"
+                                            >
+                                                { pocket.name }
+                                            </Link>
+                                            <Badge color="info">{ Object.keys(pocket.actions).length }</Badge>
                                         </td>
                                         <td>{ pocket.balance.toLocaleString() }</td>
                                         <td>{ new Date(pocket.timestamp).toLocaleDateString() }</td>
@@ -67,9 +76,9 @@ class Home extends Component {
                         </Table>
                     </div>
                 }
-            </div> 
+            </div>
         );
     }
 }
- 
+
 export default Home;

@@ -57,7 +57,8 @@ class App extends Component {
                                 <Route path="/stats" component={ Statistics }></Route>
                                 <Route path="/yearly-stats" component={ YearlyStatistics }></Route>
                                 <Route path="/balance-stats" component={ BalanceStatistics }></Route>
-                                <Route path="/actions" component={ ActionList }></Route>
+                                <Route exact path="/actions" component={ ActionList }></Route>
+                                <Route path="/actions/:pocketId" component={ ActionList }></Route>
                                 <Route path="/create-action" component={ CreateAction }></Route>
                                 <Route path="/create-movement" component={ CreateMovement }></Route>
                                 <Route path="/login" component={ Login }></Route>

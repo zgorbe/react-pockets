@@ -1,40 +1,52 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import PocketService from '../../services/PocketService';
 import { Table } from 'reactstrap';
 import EditableAction from './EditableAction';
+import { useParams, Link } from 'react-router-dom';
 
-class ActionList extends Component {
-    state = { 
-        actions: [],
-        loading: true,
-        editedAction: {}
-    }
+export default function() {
+    const [actions, setActions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [editedAction, setEditedAction] = useState({});
+    const { pocketId } = useParams();
 
-    constructor(props) {
-        super(props);
-        
-        PocketService.getAllActions().then(actions => {
-            this.setState({
-                actions: actions,
-                loading: false
-            });
-        });
-    }
+    useEffect(() => {
+        async function getAllActions() {
+            const actions = await PocketService.getAllActions();
+            setActions(actions);
+            setLoading(false);
+        };
 
-    handleActionEdit = (action) => {
-        this.setState({
-            editedAction: action
-        });
-    }
+        async function getPocketActions() {
+            const actions = await PocketService.getPocketActions(pocketId);
+            setActions(actions);
+            setLoading(false);
+        };
 
-    render() { 
-        const { loading, actions } = this.state;
-        return (
-            <div className="col-12">
-                { loading && <div className="loading mx-auto col-md-8"></div> }
-                { !loading &&
+        if (pocketId) {
+            getPocketActions();
+        } else {
+            getAllActions();
+        }
+    }, [pocketId]);
+
+    const handleActionEdit = action => setEditedAction(action);
+
+    return (
+        <div className="col-12">
+            { loading && <div className="loading mx-auto col-md-8"></div> }
+            { !loading &&
+                <>
+                    {pocketId && (
+                        <div className="text-right mr-2 mt-2">
+                            <Link to="/">Back to Home</Link>
+                        </div>
+                    )}
                     <div className="action-list">
-                        <h2 className="text-center">Action List</h2>
+                        <h2 className="text-center">
+                            Action List
+                            {pocketId && ` of ${actions[0].pocketName}`}
+                        </h2>
                         <Table className="mx-auto col-md-8" striped>
                             <thead>
                                 <tr>
@@ -48,20 +60,18 @@ class ActionList extends Component {
                             <tbody>
                             {
                                 actions.map( action => {
-                                    return <EditableAction 
-                                                action={ action } 
-                                                key={ action.key } 
-                                                edited={ this.state.editedAction.key === action.key }
-                                                handleActionEdit={ this.handleActionEdit }></EditableAction>
+                                    return <EditableAction
+                                                action={ action }
+                                                key={ action.key }
+                                                edited={ editedAction.key === action.key }
+                                                handleActionEdit={ handleActionEdit }></EditableAction>
                                 })
                             }
                             </tbody>
                         </Table>
                     </div>
-                }
-            </div>
-        );
-    }
-}
- 
-export default ActionList;
+                </>
+            }
+        </div>
+    );
+};

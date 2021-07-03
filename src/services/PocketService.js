@@ -60,6 +60,7 @@ class PocketService {
             console.log(snapshot.val()); // remove child?
         });
     }
+
     addMovement(sourcePocketId, destinationPocketId, amount) {
         return this.addAction(sourcePocketId, amount, 'minus', true).then(() => {
             return this.addAction(destinationPocketId, amount, 'plus', true);
@@ -77,6 +78,25 @@ class PocketService {
             }
             return pockets;
         });
+    }
+
+    async getPocket(pocketId) {
+        const snapshot = await db.ref(`pockets/${pocketId}`).once('value');
+        return snapshot.val();
+    }
+
+    async getPocketActions(pocketId) {
+        const pocket = await this.getPocket(pocketId);
+        const actions = Object.keys(pocket.actions).map(key => {
+            const action = pocket.actions[key];
+            action.key = key;
+            action.pocketName = pocket.name;
+            return action;
+        });
+        actions.sort(function(a, b) {
+            return b.timestamp - a.timestamp;
+        });
+        return actions;
     }
 
     getAllActions(skipMovements, sortDirection = 'desc') {
