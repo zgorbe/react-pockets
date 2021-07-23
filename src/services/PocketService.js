@@ -220,6 +220,16 @@ class PocketService {
 
         return result;
     }
+
+    addPocket(name) {
+        const newPocket = pockectsRef.push();
+        newPocket.set({
+            name,
+            balance: 0,
+            actions: [],
+            timestamp: new Date().getTime()
+        });
+    }
 }
 
 const pocketService = new PocketService();

@@ -65,7 +65,9 @@ class Home extends Component {
                                             >
                                                 { pocket.name }
                                             </Link>
-                                            <Badge color="info">{ Object.keys(pocket.actions).length }</Badge>
+                                            <Badge color="info">
+                                                { pocket.actions ? Object.keys(pocket.actions).length : 0 }
+                                            </Badge>
                                         </td>
                                         <td>{ pocket.balance.toLocaleString() }</td>
                                         <td>{ new Date(pocket.timestamp).toLocaleDateString() }</td>
